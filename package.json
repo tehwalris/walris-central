@@ -1,21 +1,36 @@
 {
   "name": "walris-central",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.1",
+  "description": "Central component of my personal voice programming system.",
+  "author": "Philippe \"tehwalris\" Voinov",
+  "license": "MIT",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run unitTest",
+    "unitTest": "mocha test/unit --recursive"
   },
   "keywords": [
     "voice",
-    "central"
+    "central",
+    "server"
   ],
-  "author": "Philippe \"tehwalris\" Voinov",
-  "license": "MIT",
+  "homepage": "https://github.com/tehwalris/walris-central",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tehwalris/walris-central.git"
+  },
   "dependencies": {
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
     "lodash": "^4.0.0",
     "socket.io": "^1.4.4"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "chai-as-promised": "^5.2.0",
+    "mocha": "^2.3.4",
+    "proxyquire": "^1.7.3",
+    "sinon": "^1.17.2",
+    "sinon-chai": "^2.8.0"
   }
 }
