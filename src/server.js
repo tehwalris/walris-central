@@ -1,44 +1,57 @@
 "use strict";
 var _ = require('lodash'),
-  app = require('express')(),
+  express = require('express'),
   bodyParser = require('body-parser'),
-  http = require('http').Server(app),
-  io = require('socket.io')(http);
+  http = require('http'),
+  socketIO = require('socket.io'),
+  Client = require('./client');
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+class Server {
+  constructor () {
+    this._app = express();
+    this._http = http.Server(this._app);
+    this._io = socketIO(this._http);
+    this._clients = [];
+    this._configureApp();
+    this._configureSocket();
+  }
 
-let components = {};
+  start (port) {
+    let deferred = Promise.defer();
+    this._http.once('listening', () => deferred.resolve());
+    this._http.once('error', () => deferred.reject());
+    this._http.listen(port);
+    return deferred.promise;
+  }
 
-app.get('/', function (req, res) {
-  res.send('walris-central:dev');
-});
+  _configureApp () {
+    this._app.use(bodyParser.urlencoded({extended: false}));
+    this._app.use(bodyParser.json());
+    this._app.use(function (err, req, res, next) {
+      console.error(err.stack);
+      res.status(500).send('Internal error.');
+      next(err);
+    });
+    this._app.get('/v', function (req, res) {
+      res.send('walris-central:dev');
+    });
+    this._app.post('/sendCommand', (req, res) => {
+      _.forEach(this._clients, (client) => {
+        let profile = client.profiles[req.body.profile];
+        if(profile)
+          profile.execute(req.body.action, req.body.data);
+      });
+      res.sendStatus(200);
+    });
+  }
 
-app.post('/sendCommand', function (req, res) {
-  console.log(req.body);
-  let component = components[_.get(req, 'body.component')];
-  if(component)
-    component.socket.emit('runAction', req.body.action, req.body.body);
-  else
-    console.log('Component not found');
-  res.send();
-});
+  _configureSocket () {
+    this._io.on('connection', (socket) => {
+      let client = new Client(socket);
+      client.on('up', () => this._clients.push(client));
+      client.on('down', () => _.remove(this._clients, (c) => c === client));
+    });
+  }
+}
 
-io.on('connection', function (socket) {
-  socket.on('register', (data) => {
-    components[data.component] = {socket: socket};
-    console.log(`Registered ${data.component}.`);
-  });
-  socket.on('disconnect', (data) => {
-    const component = _.findKey(components, (component) => component.socket === socket);
-    if(component) {
-      delete components[component];
-      console.log(`Deregistered ${component}`);
-    }
-  });
-});
-
-const port = 4420;
-http.listen(port, function () {
-  console.log(`Listening on ${port}`);
-});
+module.exports = Server;
