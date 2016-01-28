@@ -6,8 +6,9 @@
   "license": "MIT",
   "main": "src/index.js",
   "scripts": {
-    "test": "npm run unitTest",
-    "unitTest": "mocha test/unit --recursive"
+    "test": "npm run unitTest; npm run integrationTest",
+    "unitTest": "mocha test/unit --recursive",
+    "integrationTest": "mocha test/integration --recursive"
   },
   "keywords": [
     "voice",
@@ -33,6 +34,8 @@
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
     "socket-io-mocks": "^0.1.3",
-    "supertest": "^1.1.0"
+    "superagent": "^1.7.2",
+    "supertest": "^1.1.0",
+    "walris-central-client": "^0.1.3"
   }
 }

@@ -77,8 +77,6 @@ describe('server', function () {
           io._connect();
           deps['./client'].returns(clients[1]);
           io._connect();
-          clients[0].emit('up');
-          clients[1].emit('up');
           let postData = {
             profile: 'b',
             action: 'testAction',
@@ -95,7 +93,6 @@ describe('server', function () {
         it('does not send anything to disconnected clients', function (done) {
           deps['./client'].returns(clients[0]);
           io._connect();
-          clients[0].emit('up');
           clients[0].emit('down');
           let postData = {profile: 'a', action: 'testAction'};
           request(app).post('/sendCommand').send(postData).expect(200).expect(() => {

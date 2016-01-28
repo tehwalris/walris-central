@@ -48,6 +48,7 @@ class Server {
   _configureSocket () {
     this._io.on('connection', (socket) => {
       let client = new Client(socket);
+      this._clients.push(client);
       client.on('up', () => this._clients.push(client));
       client.on('down', () => _.remove(this._clients, (c) => c === client));
     });
