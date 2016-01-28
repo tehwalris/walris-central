@@ -4,7 +4,7 @@
   "description": "Central component of my personal voice programming system.",
   "author": "Philippe \"tehwalris\" Voinov",
   "license": "MIT",
-  "main": "src/index.js",
+  "bin": "src/index.js",
   "scripts": {
     "test": "npm run unitTest; npm run integrationTest",
     "unitTest": "mocha test/unit --recursive",
@@ -24,6 +24,7 @@
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
     "lodash": "^4.0.0",
+    "minimist": "^1.2.0",
     "socket.io": "^1.4.4"
   },
   "devDependencies": {
